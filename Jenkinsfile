@@ -37,5 +37,15 @@ pipeline {
                 echo 'Image Docker berhasil dirakit'
             }
         }
+        stage('5. Push to Docker Hub') {
+            steps {
+                echo 'Mengunggah ke Docker Hub...'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                    sh '''
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    docker push spyustrrrrr/aplikasi-kripto:latest
+                }
+            }
+        }
     }
 }
