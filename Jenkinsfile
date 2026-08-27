@@ -8,14 +8,23 @@ pipeline {
             }
         }
         stage('2. Security Scan SonarQube') {
+            environment {
+                scannerHome = tool 'sonar-scanner'
+            }
             steps {
                 echo 'Memindai keamanan algoritma Python...'
-                sh 'sleep 3'
+                
+                withSonarQubeEnv('sonar-server'){
+                    sh "${scannerHome}/bin/sonar-scanner \
+                    -Dsonar.projectKey=skripsi-kripto-python \
+                    -Dsonar.projectName='Skripsi Kriptografi Python' \
+                    -Dsonar.sources=."
+                }
             }
         }
         stage('3. Build & Finish') {
             steps {
-                echo 'Kode skripsi aman dan siap dilampirkan!'
+                echo 'Pemindaian selesai! Silahkan cek hasil di Dashboard SonarQube.'
             }
         }
     }
