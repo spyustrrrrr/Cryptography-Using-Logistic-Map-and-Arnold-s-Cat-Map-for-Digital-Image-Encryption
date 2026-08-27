@@ -33,7 +33,7 @@ pipeline {
         stage('4. Build Docker Image') {
             steps {
                 echo 'Membungkus algoritma menjadi Image Docker...'
-                sh 'docker build -t aplikasi-kripto:latest .'
+                sh 'docker build -t spyustrrrrr/aplikasi-kripto:latest .'
                 echo 'Image Docker berhasil dirakit'
             }
         }
