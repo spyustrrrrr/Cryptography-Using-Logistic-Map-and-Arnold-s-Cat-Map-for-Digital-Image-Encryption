@@ -216,7 +216,3 @@ if all_results:
 else:
     print("\n❌ Tidak ada gambar yang berhasil diproses.")
 
-
-# Sabotase untuk menguji Jenkins
-password_database = "admin12345" 
-print(password_database)

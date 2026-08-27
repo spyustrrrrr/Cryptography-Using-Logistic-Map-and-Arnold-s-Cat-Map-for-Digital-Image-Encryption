@@ -30,9 +30,11 @@ pipeline {
                 }
             }
         }
-        stage('4. Build & Finish') {
+        stage('4. Build Docker Image') {
             steps {
-                echo 'Pemindaian selesai! Silahkan cek hasil di Dashboard SonarQube.'
+                echo 'Membungkus algoritma menjadi Image Docker...'
+                sh 'docker build -t aplikasi-kripto:latest .'
+                echo 'Image Docker berhasil dirakit'
             }
         }
     }
