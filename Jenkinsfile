@@ -22,7 +22,15 @@ pipeline {
                 }
             }
         }
-        stage('3. Build & Finish') {
+        stage('3. Quality Gate Check') {
+            steps {
+                timeout(time : 10, unit: "MINUTES") {
+                    echo 'Menunggu keputusan Quality Gate dari SonarQube...'
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+        stage('4. Build & Finish') {
             steps {
                 echo 'Pemindaian selesai! Silahkan cek hasil di Dashboard SonarQube.'
             }
