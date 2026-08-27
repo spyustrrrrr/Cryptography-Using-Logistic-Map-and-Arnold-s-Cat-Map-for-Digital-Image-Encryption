@@ -18,7 +18,7 @@ pipeline {
                     sh "${scannerHome}/bin/sonar-scanner \
                     -Dsonar.projectKey=skripsi-kripto-python \
                     -Dsonar.projectName='Skripsi Kriptografi Python' \
-                    -Dsonar.sources=."
+                    -Dsonar.sources=riset_kripto.py"
                 }
             }
         }
