@@ -49,20 +49,21 @@ pipeline {
             }
         }
 
-        post {
-        success {
-            sh """
-            curl -s -X POST 8936825066:AAHVFmEPqhjWmFWKgWNDLLVyqdFxmdPHqyI/sendMessage \
-            -d chat_id=1383127210 \
-            -d text="✅ Mantap! Pembaruan algoritma berhasil di-build dan siap di Docker Hub."
-            """
-        }
-        failure {
-            sh """
-            curl -s -X POST 8936825066:AAHVFmEPqhjWmFWKgWNDLLVyqdFxmdPHqyI/sendMessage \
-            -d chat_id=1383127210 \
-            -d text="❌ Gawat! Terjadi kegagalan saat build kode. Cek log Jenkins segera."
-            """
+            post {
+            success {
+                sh """
+                curl -s -X POST 8936825066:AAHVFmEPqhjWmFWKgWNDLLVyqdFxmdPHqyI/sendMessage \
+                -d chat_id=1383127210 \
+                -d text="✅ Mantap! Pembaruan algoritma berhasil di-build dan siap di Docker Hub."
+                """
+            }
+            failure {
+                sh """
+                curl -s -X POST 8936825066:AAHVFmEPqhjWmFWKgWNDLLVyqdFxmdPHqyI/sendMessage \
+                -d chat_id=1383127210 \
+                -d text="❌ Gawat! Terjadi kegagalan saat build kode. Cek log Jenkins segera."
+                """
+            }
         }
     }
 }
