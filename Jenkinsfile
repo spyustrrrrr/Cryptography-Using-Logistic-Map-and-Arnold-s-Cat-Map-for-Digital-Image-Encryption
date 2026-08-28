@@ -48,7 +48,7 @@ pipeline {
                 }
             }
         }
-
+    }
             post {
             success {
                 sh """
@@ -65,5 +65,4 @@ pipeline {
                 """
             }
         }
-    }
 }
