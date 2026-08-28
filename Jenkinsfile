@@ -49,47 +49,52 @@ pipeline {
             }
         }
     }
-post {
-        success {
-            sh """
-            # 1. Mengambil data mentah (JSON) dari API SonarQube
-            STATS=\$(curl -s "http://172.17.0.1:9000/api/measures/component?component=skripsi-kripto-python&metricKeys=bugs,vulnerabilities,code_smells")
-            
-            # 2. Memotong teks untuk mengambil angkanya saja
-            BUGS=\$(echo \$STATS | grep -o '"metric":"bugs","value":"[^"]*"' | cut -d'"' -f8)
-            VULN=\$(echo \$STATS | grep -o '"metric":"vulnerabilities","value":"[^"]*"' | cut -d'"' -f8)
-            SMELLS=\$(echo \$STATS | grep -o '"metric":"code_smells","value":"[^"]*"' | cut -d'"' -f8)
+        post {
+                success {
+                    // Meminjam token rahasia SonarQube dari Jenkins
+                    withSonarQubeEnv('sonar-server') {
+                        sh """
+                        # Menarik data menggunakan \$SONAR_AUTH_TOKEN sebagai izin masuk
+                        STATS=\$(curl -s -u "\$SONAR_AUTH_TOKEN:" "\$SONAR_HOST_URL/api/measures/component?component=skripsi-kripto-python&metricKeys=bugs,vulnerabilities,code_smells")
+                        
+                        BUGS=\$(echo \$STATS | grep -o '"metric":"bugs","value":"[^"]*"' | cut -d'"' -f8)
+                        VULN=\$(echo \$STATS | grep -o '"metric":"vulnerabilities","value":"[^"]*"' | cut -d'"' -f8)
+                        SMELLS=\$(echo \$STATS | grep -o '"metric":"code_smells","value":"[^"]*"' | cut -d'"' -f8)
 
-            # 3. Mengirim pesan lengkap ke Telegram
-            curl -s -X POST https://api.telegram.org/bot8936825066:AAHVFmEPqhjWmFWKgWNDLLVyqdFxmdPHqyI/sendMessage \\
-            -d chat_id=1383127210 \\
-            -d text="✅ Build #${BUILD_NUMBER} Sukses!
-            
-📊 LAPORAN SONARQUBE:
-- Bugs: \${BUGS:-0}
-- Kelemahan (Vuln): \${VULN:-0}
-- Code Smells: \${SMELLS:-0}
+                        curl -s -X POST https://api.telegram.org/bot8936825066:AAHVFmEPqhjWmFWKgWNDLLVyqdFxmdPHqyI/sendMessage \\
+                        -d chat_id=1383127210 \\
+                        -d text="✅ Build #${BUILD_NUMBER} Sukses!
+                        
+        📊 LAPORAN SONARQUBE:
+        - Bugs: \${BUGS:-0}
+        - Kelemahan (Vuln): \${VULN:-0}
+        - Code Smells: \${SMELLS:-0}
 
-Kapsul Python sudah siap di Docker Hub!"
-            """
-        }
-        failure {
-            sh """
-            STATS=\$(curl -s "http://172.17.0.1:9000/api/measures/component?component=skripsi-kripto-python&metricKeys=bugs,vulnerabilities,code_smells")
-            BUGS=\$(echo \$STATS | grep -o '"metric":"bugs","value":"[^"]*"' | cut -d'"' -f8)
-            VULN=\$(echo \$STATS | grep -o '"metric":"vulnerabilities","value":"[^"]*"' | cut -d'"' -f8)
-            
-            curl -s -X POST https://api.telegram.org/bot8936825066:AAHVFmEPqhjWmFWKgWNDLLVyqdFxmdPHqyI/sendMessage \\
-            -d chat_id=1383127210 \\
-            -d text="❌ ALARM! Build #${BUILD_NUMBER} Gagal.
-            
-📊 KONDISI KODE SAAT INI:
-- Bugs: \${BUGS:-0}
-- Kelemahan (Vuln): \${VULN:-0}
+        Kapsul Python sudah siap di Docker Hub!"
+                        """
+                    }
+                }
+                failure {
+                    withSonarQubeEnv('sonar-server') {
+                        sh """
+                        # Menarik data menggunakan \$SONAR_AUTH_TOKEN sebagai izin masuk
+                        STATS=\$(curl -s -u "\$SONAR_AUTH_TOKEN:" "\$SONAR_HOST_URL/api/measures/component?component=skripsi-kripto-python&metricKeys=bugs,vulnerabilities,code_smells")
+                        
+                        BUGS=\$(echo \$STATS | grep -o '"metric":"bugs","value":"[^"]*"' | cut -d'"' -f8)
+                        VULN=\$(echo \$STATS | grep -o '"metric":"vulnerabilities","value":"[^"]*"' | cut -d'"' -f8)
+                        
+                        curl -s -X POST https://api.telegram.org/bot8936825066:AAHVFmEPqhjWmFWKgWNDLLVyqdFxmdPHqyI/sendMessage \\
+                        -d chat_id=1383127210 \\
+                        -d text="❌ ALARM! Build #${BUILD_NUMBER} Gagal.
+                        
+        📊 KONDISI KODE SAAT INI:
+        - Bugs: \${BUGS:-0}
+        - Kelemahan (Vuln): \${VULN:-0}
 
-Segera cek detailnya di:
-http://172.17.0.1:9000/dashboard?id=skripsi-kripto-python"
-            """
-        }
-    }
+        Segera cek baris kode mana yang rusak di:
+        \${SONAR_HOST_URL}/dashboard?id=skripsi-kripto-python"
+                        """
+                    }
+                }
+            }
 }
