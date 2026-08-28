@@ -217,3 +217,11 @@ else:
     print("\n❌ Tidak ada gambar yang berhasil diproses.")
 
 # Menguji otomatisasi webhook
+
+# === KODE SABOTASE UNTUK MENGUJI SONARQUBE ===
+def uji_kegagalan_sistem(data=[]):          # Code Smell: Menggunakan 'mutable object' sebagai nilai default
+    kunci_rahasia = "password_super_admin"  # Vulnerability: Menulis password secara terang-terangan (Hardcoded credential)
+    
+    if True:
+        return True
+        print("Baris ini rusak")            # Bug: Kode yang tidak mungkin pernah dieksekusi (Unreachable code)
