@@ -216,3 +216,4 @@ if all_results:
 else:
     print("\n❌ Tidak ada gambar yang berhasil diproses.")
 
+# Menguji otomatisasi webhook
